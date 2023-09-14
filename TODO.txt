@@ -1,0 +1,18 @@
+x Organizar el código para que vuelva a compilar en platformio
+x Hacer una cara más decente
+x Soldar el LED al pin del INT
+x Cambiar el robot al nuevo soporte impreso
+- Usar el TCS34725_async y reconocer los colores
+- Arreglar el control via WEB para el robot
+- Depurar el controlador (demasiado giro (quiere decir que hay que reducir el número de pulsos))
+x Ajustar el equilibro del robot (estabilidad)
+- Hacer el controlador desde Unity o kivy
+- La dirección de los giros está bien, pero adelante y atrás están invertidos
+- Animación de las caras
+- Hacer que el robot genere su propio AP con ip/password fijos
+- Hacer interfaz para leer el voltaje de la batería
+- Hacer interfaz para leer el color
+- Programar la traducción de los colores en acciones
+- Ajustar los valores del robot para que se levante más fácilmente cuando se caiga
+x Mejorar la estabilidad dinámica (cuando es empujado, o cuando se balancea, etc)
+- Diseñar la carcasa en 3D
