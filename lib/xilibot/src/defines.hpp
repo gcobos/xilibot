@@ -58,7 +58,7 @@
 #define GRAD2RAD 0.01745329251994329576923690768489
 
 // Motor enable pin
-#define MOTOR_ENABLE D0
+#define MOTOR_ENABLE_PIN D0
 
 // X motor
 #define DIR_M1_PIN D3
@@ -68,7 +68,9 @@
 #define DIR_M2_PIN D5
 #define STEP_M2_PIN D6
 
-#define TCS_INTERRUPT D7
+#define TCS_INT_PIN D7
+
+#define BUZZER_PIN D8
 
 #ifdef ENABLE_COLOR_READER
  // Colors (detected & LED (except NONE for this last one)) expected values

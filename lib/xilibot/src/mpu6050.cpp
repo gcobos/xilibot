@@ -640,7 +640,7 @@ bool MPU6050_newData()
 
   error = MPU6050_read(MPU6050_INT_STATUS, &status, 1);
   if (error != 0) {
-    digitalWrite(D8, HIGH); delay(15); digitalWrite(D8, LOW);
+    digitalWrite(BUZZER_PIN, HIGH); delay(15); digitalWrite(BUZZER_PIN, LOW);
 #ifdef DEBUG
     Serial.print("4:MPU6050 Error:");
     Serial.println(error);
@@ -660,7 +660,7 @@ void MPU6050_read_3axis()
   // read 14 bytes (gyros, temp and accels)
   error = MPU6050_read (MPU6050_ACCEL_XOUT_H, (uint8_t *) &accel_t_gyro, sizeof(accel_t_gyro));
   if (error != 0) {
-    digitalWrite(D8, HIGH); delay(15); digitalWrite(D8, LOW);
+    digitalWrite(BUZZER_PIN, HIGH); delay(15); digitalWrite(BUZZER_PIN, LOW);
 #ifdef DEBUG
     Serial.print("1:MPU6050 Error:");
     Serial.println(error);
@@ -704,7 +704,7 @@ void MPU6050_read_1axis()
   // read X accel
   error = MPU6050_read(MPU6050_ACCEL_XOUT_H, (uint8_t *) &accel_t_gyro.reg.x_accel_h, 6);
   if (error != 0) {
-    digitalWrite(D8, HIGH); delay(15); digitalWrite(D8, LOW);
+    digitalWrite(BUZZER_PIN, HIGH); delay(15); digitalWrite(BUZZER_PIN, LOW);
 #ifdef DEBUG
     Serial.print("2:MPU6050 Error:");
     Serial.println(error);
@@ -713,7 +713,7 @@ void MPU6050_read_1axis()
   // read X gyro
   MPU6050_read(MPU6050_GYRO_XOUT_H, (uint8_t *) &accel_t_gyro.reg.x_gyro_h, 2);
   if (error != 0) {
-    digitalWrite(D8, HIGH); delay(15); digitalWrite(D8, LOW);
+    digitalWrite(BUZZER_PIN, HIGH); delay(15); digitalWrite(BUZZER_PIN, LOW);
 #ifdef DEBUG
     Serial.print("3:MPU6050 Error:");
     Serial.println(error);

@@ -90,14 +90,11 @@ uint8_t slow_loop_counter;	 // slow loop 2Hz
 uint8_t sendBattery_counter; // To send battery status
 int16_t BatteryValue;
 
-
 #ifdef ENABLE_DISPLAY
 U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 #endif
 
 #ifdef ENABLE_COLOR_READER
-
-extern uint16_t red, green, blue;
 
 #define LUX_TO_PERCENTAGE(val)                (getPercentage(val, 0.0105, -0.0843))
 #define REFLECTED_LIGHT_TO_PERCENTAGE(val)    (getPercentage(val, 0.0017, -8))
@@ -108,7 +105,7 @@ extern uint16_t red, green, blue;
 uint8_t       sensorColor;
 uint8_t       reflectedLight;
 uint8_t       ambientLight;
-uint16_t      red, green, blue, clear, lux;
+extern uint16_t      red, green, blue, clear, lux;
 volatile bool sensorReady = true;
 
 // Default settings: TCS34725_GAIN_4X,  TCS34725_INTEGRATIONTIME_154MS
@@ -204,7 +201,6 @@ void processColor()
     }
 }
 
-// It was: TCS34725_INTEGRATIONTIME_614MS
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
 
 #endif
@@ -215,15 +211,15 @@ void setup()
 	Serial.print("Initiating...");
 
 	// Configure pins
-	pinMode(DIR_M1_PIN, OUTPUT);		// DIR MOTOR 1
-	pinMode(STEP_M1_PIN, OUTPUT);		// STEP MOTOR 1
-	pinMode(DIR_M2_PIN, OUTPUT);		// DIR MOTOR 2
-	pinMode(STEP_M2_PIN, OUTPUT);		// STEP MOTOR 2
-	pinMode(MOTOR_ENABLE, OUTPUT);		// ENABLE MOTORS PIN AS OUTPUT
-	pinMode(TCS_INT_PIN, OUTPUT);		// TCS INTERRUPT
-	pinMode(D8, OUTPUT);				// BUZZER
-	digitalWrite(MOTOR_ENABLE, HIGH);   // Motors ENABLE
-	digitalWrite(MOTOR_ENABLE, HIGH);   // Motors ENABLE
+	pinMode(DIR_M1_PIN, OUTPUT);			// DIR MOTOR 1
+	pinMode(STEP_M1_PIN, OUTPUT);			// STEP MOTOR 1
+	pinMode(DIR_M2_PIN, OUTPUT);			// DIR MOTOR 2
+	pinMode(STEP_M2_PIN, OUTPUT);			// STEP MOTOR 2
+	pinMode(MOTOR_ENABLE_PIN, OUTPUT);		// ENABLE MOTORS PIN AS OUTPUT
+	pinMode(TCS_INT_PIN, OUTPUT);			// TCS INTERRUPT
+	pinMode(BUZZER_PIN, OUTPUT);			// BUZZER
+	digitalWrite(MOTOR_ENABLE_PIN, HIGH);   // Motors ENABLE
+	digitalWrite(TCS_INT_PIN, LOW);   		// Disable TCS INT???
 
 	WiFi.begin(WIFI_SSID, WIFI_PASS);
 	while (WiFi.status() != WL_CONNECTED)
@@ -248,9 +244,9 @@ void setup()
 	
 	// Make the buzzer sound
 	// do not use tone() because it causes conflicts with timer1 used for the steppers!
-	digitalWrite(D8, HIGH); delay(10); digitalWrite(D8, LOW);
+	digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);
 	delay(10); 
-	digitalWrite(D8, HIGH); delay(10); digitalWrite(D8, LOW);
+	digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);
 
 	Serial.println(F("Initializing I2C devices..."));
 #ifdef ENABLE_DISPLAY
@@ -275,7 +271,7 @@ void setup()
   	// Calibrate MPU gyros
   	MPU6050_calibrate();
 
-	digitalWrite(D8, HIGH); delay(300); digitalWrite(D8, LOW); 
+	digitalWrite(BUZZER_PIN, HIGH); delay(300); digitalWrite(BUZZER_PIN, LOW); 
 #ifdef ENABLE_COLOR_READER
 
 	// Device config
@@ -312,7 +308,7 @@ void setup()
 	setMotorSpeedM2(0);               // Motor2 stopped
 	dir_M2 = 0;
 
-	digitalWrite(MOTOR_ENABLE, LOW);   // Enable motors
+	digitalWrite(MOTOR_ENABLE_PIN, LOW);   // Enable motors
 	delay(200);
 
 	// Little motor vibration and servo move to indicate that robot is ready
@@ -329,8 +325,6 @@ void setup()
   	timer_old = micros();
 	timer_prev = timer_old;
 }
-
-uint16_t r, g, b, c, colorTemp, lux;
 
 void loop()
 {
@@ -493,14 +487,14 @@ void loop()
 		if ((angle_adjusted < angle_ready) && (angle_adjusted > -angle_ready)) // Is robot ready (upright?)
 		{
 		// NORMAL MODE
-		digitalWrite(MOTOR_ENABLE, LOW);  // Motors enable
+		digitalWrite(MOTOR_ENABLE_PIN, LOW);  // Motors enable
 		// NOW we send the commands to the motors
 		setMotorSpeedM1(motor1);
 		setMotorSpeedM2(motor2);
 		}
 		else   // Robot not ready (flat), angle > angle_ready => ROBOT OFF
 		{
-		digitalWrite(MOTOR_ENABLE, HIGH);  // Disable motors
+		digitalWrite(MOTOR_ENABLE_PIN, HIGH);  // Disable motors
 		setMotorSpeedM1(0);
 		setMotorSpeedM2(0);
 		PID_errorSum = 0;  // Reset PID I term
@@ -542,7 +536,7 @@ void loop()
 		// Read only when speed < 1, and turn the led on before reading
 		if (true) { // estimated_speed_filtered < 1 && fabs(angle_adjusted) < 75) {
 #ifdef ENABLE_COLOR_READER
-			processColor();
+			//processColor();
 #endif
 		}
 		timer_prev = timer_value;
@@ -561,7 +555,7 @@ void loop()
 		//display.printf("\nTime:\n%d\n", timer_value - timer_prev);
 		display.printf("Temp: %d\n", colorTemp);
 		*/
-#if ENABLE_COLOR_READER
+#ifdef ENABLE_COLOR_READER
 		//Serial.printf("\nTime:\n%d\n", timer_value - timer_prev);
 		const char *colorNames[] = {
 			"BLACK",
@@ -576,7 +570,7 @@ void loop()
 			"RED",
 			"WHITE",
 		};
-		display.clearDisplay();
+		/*display.clearDisplay();
 		//display.setCursor(0, 0);
 		if (sensorColor < 0 || sensorColor > 10) {
 			display.drawStr(0, 10, "NO COLOR");
@@ -584,6 +578,7 @@ void loop()
 			Serial.println(colorNames[sensorColor]);
 			display.drawStr(0, 20, colorNames[sensorColor]);
 		}
+		*/
 		//display.printf("Lux: %d\n", lux);
 #endif
 		//display.printf("Angle: %f\n", angle_adjusted);
