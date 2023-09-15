@@ -5,7 +5,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include <SPI.h>
+//#include <SPI.h>
 #include <defines.hpp>
 // OLED display
 #ifdef ENABLE_DISPLAY
@@ -99,13 +99,15 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 #define LUX_TO_PERCENTAGE(val)                (getPercentage(val, 0.0105, -0.0843))
 #define REFLECTED_LIGHT_TO_PERCENTAGE(val)    (getPercentage(val, 0.0017, -8))
 
-#define MANHATTAN
+//#define BASIC_RGB
+//#define MANHATTAN
+#define CANBERRA
 #include <color_detection.hpp>
 
 uint8_t       sensorColor;
 uint8_t       reflectedLight;
 uint8_t       ambientLight;
-extern uint16_t      red, green, blue, clear, lux;
+uint16_t      red, green, blue, clear, lux;
 volatile bool sensorReady = true;
 
 // Default settings: TCS34725_GAIN_4X,  TCS34725_INTEGRATIONTIME_154MS
@@ -139,20 +141,17 @@ uint8_t getPercentage(const uint16_t rawValue, const float& a_coef, const float&
 
 void processColor()
 {
-	//Serial.printf("Ready? %d\n", sensorReady);
     if (sensorReady) {
         // Data measurement
         // noDelay param set to true: Asynchronous mode, must be used with interrupt configured.
         bool status = rgb_sensor.updateData(true);
-		Serial.printf("Status? %d\n", status);
         if (status) {
             // Ambient light (lux) computation
             rgb_sensor.updateLux();
 
             int16_t lux = lround(rgb_sensor.lux);
-			Serial.printf("Lux? %d\n", lux);
 
-            if (lux >= 30) {
+            if (lux >= 10) {
                 // Set ambient light (lux) - map 0-100
                 //ambientLight = map(rgb_sensor.lux, 0, rgb_sensor.maxlux, 0, 100);
                 ambientLight = LUX_TO_PERCENTAGE(lux); // cast ?
@@ -169,13 +168,13 @@ void processColor()
 
                 // Set detected color
                 sensorColor = detectColor(red, green, blue);
-				Serial.println(sensorColor, DEC);
             } else {
                 sensorColor = COLOR_NONE;
 				Serial.println(F("not enough light to guess colors"));
             }
             clear = rgb_sensor.c_comp >> 6;
-            
+
+#ifdef DEBUG
             // Human readable debugging
         	Serial.print("Lux: "); Serial.print(rgb_sensor.lux, DEC);
             Serial.print("; max: "); Serial.print(rgb_sensor.maxlux);
@@ -191,6 +190,7 @@ void processColor()
             Serial.print(green, DEC); Serial.print(";");
             Serial.print(blue, DEC); Serial.print(";");
             Serial.println(clear, DEC);*/
+#endif
         } else {
             sensorColor = COLOR_NONE;
             Serial.println(F("not valid data! wait next measure"));
@@ -200,8 +200,6 @@ void processColor()
         sensorReady = false;
     }
 }
-
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
 
 #endif
 
@@ -216,10 +214,9 @@ void setup()
 	pinMode(DIR_M2_PIN, OUTPUT);			// DIR MOTOR 2
 	pinMode(STEP_M2_PIN, OUTPUT);			// STEP MOTOR 2
 	pinMode(MOTOR_ENABLE_PIN, OUTPUT);		// ENABLE MOTORS PIN AS OUTPUT
-	pinMode(TCS_INT_PIN, OUTPUT);			// TCS INTERRUPT
+	pinMode(TCS_INT_PIN, OUTPUT);			// TCS INTERRUPT (HERE AS OUTPUT)
 	pinMode(BUZZER_PIN, OUTPUT);			// BUZZER
 	digitalWrite(MOTOR_ENABLE_PIN, HIGH);   // Motors ENABLE
-	digitalWrite(TCS_INT_PIN, LOW);   		// Disable TCS INT???
 
 	WiFi.begin(WIFI_SSID, WIFI_PASS);
 	while (WiFi.status() != WL_CONNECTED)
@@ -244,24 +241,20 @@ void setup()
 	
 	// Make the buzzer sound
 	// do not use tone() because it causes conflicts with timer1 used for the steppers!
-	digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);
+	/*digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);
 	delay(10); 
-	digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);
+	digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);*/
 
 	Serial.println(F("Initializing I2C devices..."));
 #ifdef ENABLE_DISPLAY
 	if (!display.begin()) {
 		Serial.println(F("SH1106 allocation failed"));
-		//for (;;) delay(1000);	 // Don't proceed, loop forever
 	}
-	//display.clearBuffer();
- 	//display.setFont(u8g2_font_ncenB08_tr);	// choose a suitable font
+	display.setFont(u8g2_font_6x12_mr);
 	// Export as XBM and use this header: const unsigned char face1_bits[] U8X8_PROGMEM = {
-	//display.setFont(u8g2_font_6x12_mr);
-	//display.setFlipMode(0);
 	display.drawXBM(0, 0, 128, 64, face1_bits);
-	delay(500); // PaUse for 1/2 seconds
-	//display.updateDisplay();
+	delay(500); // Pause for 1/2 seconds
+	display.updateDisplay();
 	display.sendBuffer();
 #endif
 	Serial.println("Don't move!");
@@ -272,29 +265,6 @@ void setup()
   	MPU6050_calibrate();
 
 	digitalWrite(BUZZER_PIN, HIGH); delay(300); digitalWrite(BUZZER_PIN, LOW); 
-#ifdef ENABLE_COLOR_READER
-
-	// Device config
-	sensorColor = COLOR_NONE;
-	
-	while (!rgb_sensor.begin()) {
-    	Serial.println(F("TCS34725 NOT found"));
-    	delay(1000);
-	}
-	Serial.println(F("Found sensor"));
-
-	// Setup for color sensor   
-	attachInterrupt(TCS_INT_PIN, tcs_isr, FALLING);
-
-	rgb_sensor.tcs.setGain(TCS34725_GAIN_1X);
-	rgb_sensor.tcs.setIntegrationTime(TCS34725_INTEGRATIONTIME_614MS);
-    // Set persistence filter to generate an interrupt for every RGB Cycle,
-    // regardless of the integration limits
-    rgb_sensor.tcs.write8(TCS34725_PERS, TCS34725_PERS_NONE);
-    // RGBC interrupt enable. When asserted, permits RGBC interrupts to be generated.
-    rgb_sensor.tcs.setInterrupt(true);
-
-#endif
 
 	// STEPPER MOTORS INITIALIZATION
 	Serial.println("Steppers init");
@@ -311,19 +281,36 @@ void setup()
 	digitalWrite(MOTOR_ENABLE_PIN, LOW);   // Enable motors
 	delay(200);
 
-	// Little motor vibration and servo move to indicate that robot is ready
-	for (uint8_t k = 0; k < 3; k++) {
-		setMotorSpeedM1(5);
-		setMotorSpeedM2(5);
-		delay(200);
-		setMotorSpeedM1(-5);
-		setMotorSpeedM2(-5);
-		delay(200);
-	}
-
   	Serial.println("Start...");
   	timer_old = micros();
 	timer_prev = timer_old;
+
+	// Wait here to set up this as INPUT, otherwise, it messes up the MPU
+	pinMode(TCS_INT_PIN, INPUT);			// TCS INTERRUPT
+#ifdef ENABLE_COLOR_READER
+
+	// Device config
+	sensorColor = COLOR_NONE;
+	
+	while (!rgb_sensor.begin()) {
+    	Serial.println(F("TCS34725 NOT found"));
+    	delay(1000);
+	}
+	Serial.println(F("Found sensor"));
+
+	//rgb_sensor.tcs.setGain(TCS34725_GAIN_1X);
+	//rgb_sensor.tcs.setIntegrationTime(TCS34725_INTEGRATIONTIME_614MS);
+    // Set persistence filter to generate an interrupt for every RGB Cycle,
+    // regardless of the integration limits
+    rgb_sensor.tcs.write8(TCS34725_PERS, TCS34725_PERS_NONE);
+    // RGBC interrupt enable. When asserted, permits RGBC interrupts to be generated.
+    rgb_sensor.tcs.setInterrupt(true);
+
+	// Setup for color sensor   
+	attachInterrupt(TCS_INT_PIN, tcs_isr, FALLING);
+
+#endif
+
 }
 
 void loop()
@@ -536,7 +523,7 @@ void loop()
 		// Read only when speed < 1, and turn the led on before reading
 		if (true) { // estimated_speed_filtered < 1 && fabs(angle_adjusted) < 75) {
 #ifdef ENABLE_COLOR_READER
-			//processColor();
+			processColor();
 #endif
 		}
 		timer_prev = timer_value;
@@ -570,15 +557,14 @@ void loop()
 			"RED",
 			"WHITE",
 		};
-		/*display.clearDisplay();
-		//display.setCursor(0, 0);
 		if (sensorColor < 0 || sensorColor > 10) {
 			display.drawStr(0, 10, "NO COLOR");
 		} else {
-			Serial.println(colorNames[sensorColor]);
+			//Serial.println(colorNames[sensorColor]);
 			display.drawStr(0, 20, colorNames[sensorColor]);
 		}
-		*/
+		display.updateDisplay();
+		
 		//display.printf("Lux: %d\n", lux);
 #endif
 		//display.printf("Angle: %f\n", angle_adjusted);
@@ -588,7 +574,7 @@ void loop()
 		//display.display();
 		//Serial.printf("M1: %d\n", motor1);
 		//Serial.printf("M2: %d\n", motor2);
-		//Serial.printf("R: %d, G: %d, B: %d\n", r, g, b);
+		Serial.printf("R: %d, G: %d, B: %d\n", red, green, blue);
 		//Serial.println(ColorNameString(r, g, b));
 		//display.updateDisplay();
 #endif

@@ -41,9 +41,6 @@
  *          on microcontrollers... Does it worth it? Probably not.
  *          https://en.wikipedia.org/wiki/Canberra_distance
  */
-//#define BASIC_RGB
-#define MANHATTAN
-//#define CANBERRA
 
 // Colors (detected & LED (except NONE for this last one)) expected values
 #define COLOR_NONE      0xFF
@@ -71,6 +68,7 @@ uint8_t detectColor(const uint16_t &red, const uint16_t &green, const uint16_t &
     } else if ((blue > red) && (blue > green)) {
         return COLOR_BLUE;
     }
+    return COLOR_NONE;
 }
 #endif
 
