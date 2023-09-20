@@ -90,7 +90,7 @@ void setMotorSpeedM1(int16_t tspeed)
     else
         speed_M1 = tspeed;
 
-    speed = speed_M1 * 25; // Adjust factor from control output speed to real motor speed in steps/second
+    speed = speed_M1 * 26; // Adjust factor from control output speed to real motor speed in steps/second
 
     if (speed == 0)
     {
@@ -135,7 +135,7 @@ void setMotorSpeedM2(int16_t tspeed)
   else
     speed_M2 = tspeed;
 
-  speed = speed_M2 * 25; // Adjust factor from control output speed to real motor speed in steps/second
+  speed = speed_M2 * 26; // Adjust factor from control output speed to real motor speed in steps/second
 
   if (speed == 0)
   {

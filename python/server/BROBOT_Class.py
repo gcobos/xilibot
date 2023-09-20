@@ -13,7 +13,7 @@ import struct
 
 # CLASS to control BROBOT
 class BROBOT(object):
-  UDP_IP = "192.168.8.154"     # Default BROBOT IP (with BROBOT JJROBOTS_XX wifi)
+  UDP_IP = "192.168.8.155"     # Default BROBOT IP (with BROBOT JJROBOTS_XX wifi)
   UDP_PORT = 2222  # Default BROBOT port
   sock = 0
   def __init__(self):

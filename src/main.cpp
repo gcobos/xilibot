@@ -266,8 +266,8 @@ void loop()
 #ifdef DEBUG
 				Serial.printf("Target steps? %d, %d\n", target_steps1, target_steps2);
 #endif
-				target_steps1 = steps1 + OSCmove_steps1;
-				target_steps2 = steps2 + OSCmove_steps2;
+				target_steps1 = steps1 - OSCmove_steps1;
+				target_steps2 = steps2 - OSCmove_steps2;
 			}
 			else
 			{
@@ -275,7 +275,7 @@ void loop()
 				Serial.println("THROTTLE");
 #endif
 				positionControlMode = false;
-				throttle = (OSCfader[0] - 0.5) * max_throttle;
+				throttle = (OSCfader[0] - 0.5) * -max_throttle;
 				// We add some exponential on steering to smooth the center band
 				steering = OSCfader[1] - 0.5;
 				if (steering > 0)
