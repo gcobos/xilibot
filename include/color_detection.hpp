@@ -26,15 +26,15 @@
  *    reaching the side of the sensor. Think about matt black sensor shroud.
  *
  *    Metrics:
- *      - BASIC_RGB: Simple comparison between channels;
+ *      - COLOR_DETECTION_BASIC_RGB: Simple comparison between channels;
  *          Very fast but is likely to produce errors.
- *      - MANHATTAN: Sum of absolute values of distances.
+ *      - COLOR_DETECTION_MANHATTAN: Sum of absolute values of distances.
  *          Quite heavy, but quite accurate if the reference values have been
  *          measured seriously and if the measurement environment is controlled
  *          (reproducible). Distance between the sensor and the object should be
  *          the same as during learning.
  *          https://fr.wikipedia.org/wiki/Distance_de_Manhattan
- *     - CANBERRA: A weighted version of Manhattan distance;
+ *     - COLOR_DETECTION_CANBERRA: A weighted version of Manhattan distance;
  *          Very heavy but brings a higher accuracy and more tolerance/stability to variations
  *          in the measurement environment.
  *          Note: The manipulation of decimal numbers should be avoided
@@ -56,10 +56,8 @@
 #define COLOR_RED       9
 #define COLOR_WHITE     10
 
-extern uint16_t red, green, blue;
 
-
-#ifdef BASIC_RGB
+#ifdef COLOR_DETECTION_BASIC_RGB
 uint8_t detectColor(const uint16_t &red, const uint16_t &green, const uint16_t &blue) {
     if ((red > green) && (red > blue)) {
         return COLOR_RED;
@@ -72,8 +70,7 @@ uint8_t detectColor(const uint16_t &red, const uint16_t &green, const uint16_t &
 }
 #endif
 
-
-#if (defined(MANHATTAN) || defined(CANBERRA))
+#if (defined(COLOR_DETECTION_MANHATTAN) || defined(COLOR_DETECTION_CANBERRA))
 // *_1: measures at 1 cm
 // *_3: measures at 3 cms
 const uint16_t SAMPLES[][3] = {
@@ -110,7 +107,7 @@ const uint8_t SAMPLES_MAP[] = {
 const uint8_t samplesCount = sizeof(SAMPLES) / sizeof(SAMPLES[0]);
 
 uint8_t detectColor(const uint16_t &red, const uint16_t &green, const uint16_t &blue) {
-#ifdef MANHATTAN
+#ifdef COLOR_DETECTION_MANHATTAN
     uint16_t minDist = 10000;
     uint16_t expDist;
 #else
@@ -120,7 +117,7 @@ uint8_t detectColor(const uint16_t &red, const uint16_t &green, const uint16_t &
     uint8_t bestSampleIndex = 0;
 
     for (uint8_t i = 0; i < samplesCount; i++) {
-#ifdef MANHATTAN
+#ifdef COLOR_DETECTION_MANHATTAN
         expDist = abs(static_cast<int16_t>(red - SAMPLES[i][0]))
                   + abs(static_cast<int16_t>(green - SAMPLES[i][1]))
                   + abs(static_cast<int16_t>(blue - SAMPLES[i][2]));
@@ -141,7 +138,7 @@ uint8_t detectColor(const uint16_t &red, const uint16_t &green, const uint16_t &
     }
 
     // Arbitrary threshold to avoid erroneous identifications
-#ifdef MANHATTAN
+#ifdef COLOR_DETECTION_MANHATTAN
     if (minDist > 100) {
 #else
     if (minDist > 1.9) { // Red color is quite difficult to identify even with this high threashold

@@ -23,8 +23,8 @@ volatile int32_t steps2;
 int32_t target_steps1;
 int32_t target_steps2;
 
-volatile int16_t step_count_M1 = 0;
-volatile int16_t step_count_M2 = 0;
+volatile uint16_t step_count_M1 = 0;
+volatile uint16_t step_count_M2 = 0;
 int16_t step_max_M1 = 0;
 int16_t step_max_M2 = 0;
 
@@ -53,7 +53,7 @@ void IRAM_ATTR timer1_isr()
           GPOS = (1 << STEP_M1_PIN);
           steps1 -= dir_M1;
         }
-        step_count_M1 = step_max_M1;
+        step_count_M1 += step_max_M1;
     }
     if (step_count_M2 > 0) {
         step_count_M2--;
@@ -62,7 +62,7 @@ void IRAM_ATTR timer1_isr()
           GPOS = (1 << STEP_M2_PIN);
           steps2 -= dir_M2;
         }
-        step_count_M2 = step_max_M2;
+        step_count_M2 += step_max_M2;
     }
 }
 
@@ -101,19 +101,24 @@ void setMotorSpeedM1(int16_t tspeed)
     {
         timer_period = 100000 / speed;
         dir_M1 = 1;
-        GPOC = (1 << DIR_M1_PIN);
+        GPOS = (1 << DIR_M1_PIN);
     }
     else
     {
         timer_period = 100000 / -speed;
         dir_M1 = -1;
-        GPOS = (1 << DIR_M1_PIN);
+        GPOC = (1 << DIR_M1_PIN);
     }
     if (timer_period > 65535)   // Check for minimum speed (maximum period without overflow)
         timer_period = ZERO_SPEED;
 
     step_max_M1 = timer_period;
     step_count_M1 = timer_period;
+/*
+#ifdef DEBUG
+    Serial.printf("step_max_M1 & step_count_M1 = %d\n", timer_period);
+#endif
+*/
 }
 
 // Set speed of Stepper Motor2 (tspeed could be positive or negative for reverse)
@@ -141,20 +146,24 @@ void setMotorSpeedM2(int16_t tspeed)
   {
     timer_period = 100000 / speed;
     dir_M2 = 1;
-    GPOC = (1 << DIR_M2_PIN);
+    GPOS = (1 << DIR_M2_PIN);
   }
   else
   {
     timer_period = 100000 / -speed;
     dir_M2 = -1;
-    GPOS = (1 << DIR_M2_PIN);
+    GPOC = (1 << DIR_M2_PIN);
   }
   if (timer_period > 65535)   // Check for minimum speed (maximum period without overflow)
     timer_period = ZERO_SPEED;
 
   step_max_M2 = timer_period;
   step_count_M2 = timer_period;
-
+/*
+#ifdef DEBUG
+    Serial.printf("step_max_M2 & step_count_M2 = %d\n", timer_period);
+#endif
+*/
 }
 
 float positionPDControl(long actualPos, long setPointPos, float Kpp, float Kdp, int16_t speedM)

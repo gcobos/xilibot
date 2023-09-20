@@ -5,9 +5,14 @@
 
 // Enable I2C devices?
 #define ENABLE_DISPLAY
-#define ENABLE_COLOR_READER
+#define ENABLE_COLOR_SENSOR
 
-//#define DEBUG 1 // 0 = No debug info (default) DEBUG 1 for console output
+// #define DEBUG 1 // 0 = No debug info (default) DEBUG 1 for console output
+
+// Color detection methods
+//#define COLOR_DETECTION_BASIC_RGB
+//#define COLOR_DETECTION_MANHATTAN
+#define COLOR_DETECTION_CANBERRA
 
 // NORMAL MODE PARAMETERS (MAXIMUM SETTINGS)
 #define MAX_THROTTLE 550
@@ -38,7 +43,7 @@
 #define ITERM_MAX_ERROR 30 // Iterm windup constants for PI control
 #define ITERM_MAX 10000
 
-#define ANGLE_OFFSET 0.0 // Offset angle for balance (to compensate robot own weight distribution)
+#define ANGLE_OFFSET -1.0 // Offset angle for balance (to compensate robot own weight distribution)
 
 #define ZERO_SPEED 65535
 #define MAX_ACCEL 14 // Maximum motor acceleration (MAX RECOMMENDED VALUE: 20) (default:14)
@@ -53,18 +58,18 @@
 #define MOTOR_ENABLE_PIN D0
 
 // X motor
-#define DIR_M1_PIN D3
-#define STEP_M1_PIN D4
+#define DIR_M1_PIN D5
+#define STEP_M1_PIN D6
 
 // Y motor
-#define DIR_M2_PIN D5
-#define STEP_M2_PIN D6
+#define DIR_M2_PIN D3
+#define STEP_M2_PIN D4
 
-#define TCS_INT_PIN D7
+#define TCS_LED_PIN D7
 
 #define BUZZER_PIN D8
 
-#ifdef ENABLE_COLOR_READER
+#ifdef ENABLE_COLOR_SENSOR
  // Colors (detected & LED (except NONE for this last one)) expected values
  #define COLOR_NONE      0xFF
  #define COLOR_BLACK     0
