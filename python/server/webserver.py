@@ -173,7 +173,7 @@ try:
     print("Started httpserver on port " , PORT_NUMBER)
     print("Opening browser... wait a moment...")
     time.sleep(2)
-    url = "http://localhost:8080/brobot/index.html"
+    url = "../../web/index.html"
     webbrowser.open(url,new=2)
     while 1:
         pass    
