@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Blockly interface for BROBOT block programming
+# Blockly interface for XILIBOT block programming
 
 # Remember to connect your wifi to your robot network JJROBOTS_XX password:8764321
 
@@ -10,14 +10,14 @@
 from http.server import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
 from urllib.parse import urlparse, parse_qs
-from BROBOT_Class import BROBOT
+from XILIBOT_Class import XILIBOT
 import time
 import webbrowser
 import threading
 import socket
 
-# BROBOT initialization
-myRobot = BROBOT()
+# XILIBOT initialization
+myRobot = XILIBOT()
 IP = myRobot.UDP_IP
 PORT = myRobot.UDP_PORT
 
@@ -106,7 +106,7 @@ class myHandler(BaseHTTPRequestHandler):
    #Handler for the GET requests
    def do_GET(self):
       if self.path=="/":
-         self.path="brobot/index.html"
+         self.path="xilibot/index.html"
 
       try:
          #Check the file extension required and

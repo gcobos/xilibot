@@ -7,7 +7,10 @@
 #define ENABLE_DISPLAY
 #define ENABLE_COLOR_SENSOR
 
-// #define DEBUG 1 // 0 = No debug info (default) DEBUG 1 for console output
+// Create its own Wifi Access Point?
+#define CREATE_WIFI_AP
+
+//#define DEBUG 1 // 0 = No debug info (default) DEBUG 1 for console output
 
 // Color detection methods
 //#define COLOR_DETECTION_BASIC_RGB
@@ -22,7 +25,7 @@
 // PRO MODE = MORE AGGRESSIVE (MAXIMUM SETTINGS)
 #define MAX_THROTTLE_PRO 780	// Max recommended value: 860
 #define MAX_STEERING_PRO 260	// Max recommended value: 280
-#define MAX_TARGET_ANGLE_PRO 26 // Max recommended value: 32
+#define MAX_TARGET_ANGLE_PRO 28 // Max recommended value: 32
 
 // Default control terms for EVO 2
 #define KP 0.32
@@ -43,7 +46,7 @@
 #define ITERM_MAX_ERROR 30 // Iterm windup constants for PI control
 #define ITERM_MAX 10000
 
-#define ANGLE_OFFSET -1.0 // Offset angle for balance (to compensate robot own weight distribution)
+#define ANGLE_OFFSET 3.0 // Offset angle for balance (to compensate robot own weight distribution)
 
 #define ZERO_SPEED 65535
 #define MAX_ACCEL 14 // Maximum motor acceleration (MAX RECOMMENDED VALUE: 20) (default:14)

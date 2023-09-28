@@ -6,9 +6,9 @@ x Usar el TCS34725_async y reconocer los colores
 x Arreglar el control via WEB para el robot
 x Depurar el controlador (demasiado giro (quiere decir que hay que reducir el número de pulsos))
 x Ajustar el equilibro del robot (estabilidad)
-- Hacer el controlador desde Unity o kivy
+x Hacer el controlador desde Unity o kivy
 x La dirección de los giros está bien, pero adelante y atrás están invertidos
-- Animación de las caras
+x Animación de las caras
 x Hacer que el robot genere su propio AP con ip/password fijos
 - Hacer interfaz para leer el voltaje de la batería
 - Hacer interfaz para leer el color
@@ -17,3 +17,4 @@ x Hacer que el robot genere su propio AP con ip/password fijos
 x Mejorar la estabilidad dinámica (cuando es empujado, o cuando se balancea, etc)
 - Diseñar la carcasa en 3D
 - OTA uploads!!
+- Añadir modelos 3D + circuitos + App control remoto

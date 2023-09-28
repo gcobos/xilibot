@@ -67,7 +67,7 @@ void readControlParameters()
     timer_old = millis();
     setMotorSpeedM1(0);
     setMotorSpeedM2(0);
-    digitalWrite(4, HIGH);  // Disable motors
+    digitalWrite(MOTOR_ENABLE_PIN, HIGH);  // Disable motors
     OSC_MsgRead();
   }
 }
@@ -160,6 +160,3 @@ int ESPsendCommand(char *command, String stopstr, int timeout_secs)
   delay(250);
   return 0;
 }
-
-
-

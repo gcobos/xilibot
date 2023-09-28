@@ -19,7 +19,8 @@
 // Wifi connection
 #include <ESP8266WiFi.h>
 #include <credentials.hpp>
-#include "../gfx/face1.xbm"
+#include "../gfx/despierto1.xbm"
+#include "../gfx/dormido1.xbm"
 
 extern volatile int32_t steps1;
 extern volatile int32_t steps2;
@@ -51,6 +52,7 @@ extern int8_t dir_M1, dir_M2;
 
 extern float angle_offset;
 extern float angle_adjusted_filtered;
+bool fallen = true;
 
 extern long timer_old;
 extern long timer_prev;
@@ -153,26 +155,28 @@ void setup()
 	digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);
 	delay(10); 
 	digitalWrite(BUZZER_PIN, HIGH); delay(10); digitalWrite(BUZZER_PIN, LOW);
-
-	/*if (WiFi.softAP(WIFI_SSID, WIFI_PASS, 1, false, 1)) {
+#ifdef CREATE_WIFI_AP
+	WiFi.softAPConfig({192,168,4,1}, {192,168,4,1}, {255,255,255,0}); // local IP, gateway, subnet
+	if (WiFi.softAP(WIFI_SSID, WIFI_PASS, 1, 0, 1)) {
 		Serial.print("Access Point is created with SSID: ");
 		Serial.println(WIFI_SSID);
 		Serial.print("Access Point IP: ");
 		Serial.println(WiFi.softAPIP());
 	} else {
 		Serial.println("Unable to Create Access Point");
-	}*/
-
+	}
+	Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.softAPIP().toString().c_str(), UDP_RECV_PORT);
+#else
 	WiFi.begin(WIFI_SSID, WIFI_PASS);
 	while (WiFi.status() != WL_CONNECTED)
 	{
 		delay(500);
-		Serial.print(".");
+		Serial.print(":");
 	}
-	Serial.println(" connected");
-
-	UDP.begin(UDP_PORT);
-	Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), UDP_PORT);
+	Serial.println("connected to AP");
+	Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), UDP_RECV_PORT);
+#endif
+	UDP.begin(UDP_RECV_PORT);
 
 	OSC_init();
 
@@ -189,14 +193,17 @@ void setup()
 	if (!display.begin()) {
 		Serial.println(F("SH1106 allocation failed"));
 	}
+	display.firstPage();
 	display.setFont(u8g2_font_6x12_mr);
 	// Export as XBM and use this header: const unsigned char face1_bits[] U8X8_PROGMEM = {
-	display.drawXBM(0, 0, 128, 64, face1_bits);
-	delay(500); // Pause for 1/2 seconds
-	display.updateDisplay();
-	display.sendBuffer();
+	//display.drawXBM(0, 0, 128, 64, face_sad_bits);
+	display.drawXBM(0, 0, 128, 64, dormido1_bits);
+	//display.updateDisplay();
+	//display.sendBuffer();
+	display.nextPage();
 #endif
 	Serial.println("Don't move!");
+	delay(500);
 	MPU6050_setup();  // setup MPU6050 IMU
 	delay(500);
 
@@ -263,9 +270,7 @@ void loop()
 #endif				
 				positionControlMode = true;
 				OSCmove_mode = false;
-#ifdef DEBUG
-				Serial.printf("Target steps? %d, %d\n", target_steps1, target_steps2);
-#endif
+				// Flip the sign here because front and back are inverted
 				target_steps1 = steps1 - OSCmove_steps1;
 				target_steps2 = steps2 - OSCmove_steps2;
 			}
@@ -419,12 +424,26 @@ void loop()
 		if ((angle_adjusted < angle_ready) && (angle_adjusted > -angle_ready)) // Is robot ready (upright?)
 		{
 			// NORMAL MODE
+#ifdef ENABLE_DISPLAY
+			if (fallen) {
+				display.drawXBM(0, 0, 128, 64, despierto1_bits);
+				display.nextPage();
+				fallen = false;
+			}
+#endif
 			GPOC = (1 << MOTOR_ENABLE_PIN);  // Motors enable
 			// NOW we send the commands to the motors
 			// NOTE: Change here forward-to-backward and left-to-right movement
 			setMotorSpeedM1(motor1);
 			setMotorSpeedM2(motor2);
-		} else  {  // Robot not ready (flat), angle > angle_ready => ROBOT OFF		
+		} else  {  // Robot not ready (flat), angle > angle_ready => ROBOT OFF	
+#ifdef ENABLE_DISPLAY
+			if (!fallen) {
+				display.drawXBM(0, 0, 128, 64, dormido1_bits);
+				display.nextPage();
+				fallen = true;
+			}
+#endif
 			GPOS = (1 << MOTOR_ENABLE_PIN);  // Disable motors
 			setMotorSpeedM1(0);
 			setMotorSpeedM2(0);
@@ -436,6 +455,8 @@ void loop()
 			// RESET steps
 			steps1 = 0;
 			steps2 = 0;
+			target_steps1 = 0;
+			target_steps2 = 0;
 			positionControlMode = false;
 			OSCmove_mode = false;
 			throttle = 0;
@@ -463,6 +484,10 @@ void loop()
 	else if (slow_loop_counter >= 100) // 1Hz
 	{
 		slow_loop_counter = 0;
+
+#ifdef DEBUG
+		Serial.printf("Target steps? %d, %d, Current steps: %d, %d\n", target_steps1, target_steps2, steps1, steps2);
+#endif
 
 #ifdef ENABLE_COLOR_SENSOR
 		// Read only when speed < 1, and turn the led on before reading
@@ -493,6 +518,8 @@ void loop()
 		//display.printf("\nTime:\n%d\n", timer_value - timer_prev);
 		display.printf("Temp: %d\n", colorTemp);
 		*/
+		//display.printf("%d", target_steps1);
+		//display.nextPage();
 #ifdef ENABLE_COLOR_SENSOR
 		const char *colorNames[] = {
 			"BLACK",
@@ -509,13 +536,13 @@ void loop()
 		};
 		/*
 		if (sensorColor < 0 || sensorColor > 10) {
-			//Serial.println("NO COLOR");
+			Serial.println("NO COLOR");
 			//display.drawStr(0, 10, "NO COLOR");
 			//GPOC = (1 << BUZZER_PIN);
 		} else {
 			if (sensorColor == COLOR_BLUE || sensorColor == COLOR_LIGHTBLUE) {
-				GPOS = (1 << BUZZER_PIN);
-				//Serial.println(colorNames[sensorColor]);
+				//GPOS = (1 << BUZZER_PIN);
+				Serial.println(colorNames[sensorColor]);
 			}
 			sensorColor = COLOR_NONE;
 			//display.drawStr(0, 20, colorNames[sensorColor]);

@@ -1,27 +1,27 @@
-# BROBOT PC CONTROL python script
-# Exampe 4: Controlling 2 BROBOTS in a coreography...
-# You should modify your BROBOT arduino code to connecto to your wifi network
-# BROBOT1 is on IP 192.168.1.101 and BROBOT 2 IP is 192.168.1.102
+# XILIBOT PC CONTROL python script
+# Exampe 4: Controlling 2 XILIBOTS in a coreography...
+# You should modify your XILIBOT arduino code to connecto to your wifi network
+# XILIBOT1 is on IP 192.168.1.101 and XILIBOT 2 IP is 192.168.1.102
 
 # author: JJROBOTS 2016
 # version: 1.01 (28/10/2016)
 # Licence: Open Source (GNU LGPLv3)
 
 import time
-from BROBOT_Class import BROBOT # Import CLASS to control BROBOT
+from XILIBOT_Class import XILIBOT # Import CLASS to control XILIBOT
 
-# BROBOT1 initialization
-myRobot1 = BROBOT()
-myRobot1.UDP_IP = "192.168.1.158"
+# XILIBOT1 initialization
+myRobot1 = XILIBOT()
+myRobot1.UDP_IP = "192.168.4.1"
 myRobot1.mode(0)  # Normal mode. optional: PRO MODE=1
 
-# BROBOT1 initialization
-myRobot2 = BROBOT()
-myRobot2.UDP_IP = "192.168.1.151"
+# XILIBOT1 initialization
+myRobot2 = XILIBOT()
+myRobot2.UDP_IP = "192.168.4.2"
 myRobot2.mode(0)  # Normal mode. optional: PRO MODE=1
 
 
-# Example of sequence of commands to BROBOT:
+# Example of sequence of commands to XILIBOT:
 myRobot1.servo(1)       #Move servo
 myRobot2.servo(1)
 time.sleep(0.25)

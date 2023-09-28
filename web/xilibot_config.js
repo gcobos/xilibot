@@ -1,0 +1,4 @@
+
+// XILIBOT STEP CONSTANTS 
+var STEPSMETER = 17700 / 4;  // STEPS/METERS         default: 11428
+var STEPSTURN = 1770;//4675;    // STEPS/TURN (360 deg) default:4675

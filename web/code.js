@@ -224,7 +224,7 @@ Code.renderContent = function() {
     xmlTextarea.value = xmlText;
     xmlTextarea.focus();
   } else if (content.id == 'content_javascript') {
-	 var code = "// BROBOT code\n";
+	 var code = "// XiliBot code\n";
 	 code += "var STEPSMETER="+STEPSMETER+";\nvar STEPSTURN="+STEPSTURN+";\n\n";  
     code += Blockly.JavaScript.workspaceToCode(Code.workspace);
     content.textContent = code;
@@ -235,9 +235,9 @@ Code.renderContent = function() {
     }
   } else if (content.id == 'content_python') {
     // Add python Initialization code
-	 code = '# PYTHON BROBOT CODE\n';
-	 code +='import time\nfrom BROBOT_Class import BROBOT\n';
-	 code += 'myRobot = BROBOT()\n\n';
+	 code = '# PYTHON XILIBOT CODE\n';
+	 code +='import time\nfrom XILIBOT_Class import XILIBOT\n';
+	 code += 'myRobot = XILIBOT()\n\n';
     code += Blockly.Python.workspaceToCode(Code.workspace);
     content.textContent = code;
     if (typeof prettyPrintOne == 'function') {

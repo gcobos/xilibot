@@ -1,6 +1,6 @@
-# BROBOT PC CONTROL python script
-# Exampe 2: Brobot Dance
-# Before running the script you need to connect the PC to the BROBOT wifi
+# XILIBOT PC CONTROL python script
+# Exampe 2: Robot Dance
+# Before running the script you need to connect the PC to the XILIBOT wifi
 # Remember, default password for Wifi network JJROBOTS_XX is 87654321
 
 # author: JJROBOTS 2016
@@ -8,10 +8,10 @@
 # Licence: Open Source (GNU LGPLv3)
 
 import time
-from BROBOT_Class import BROBOT # Import CLASS to control BROBOT
+from XILIBOT_Class import XILIBOT # Import CLASS to control XILIBOT
 
-# BROBOT initialization
-myRobot = BROBOT()
+# XILIBOT initialization
+myRobot = XILIBOT()
 myRobot.mode(1)  # PRO MODE
 
 for i in range(0,2):

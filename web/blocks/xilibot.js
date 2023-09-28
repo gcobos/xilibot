@@ -24,7 +24,7 @@
  */
 'use strict';
 
-goog.provide('Blockly.Blocks.brobot');
+goog.provide('Blockly.Blocks.xilibot');
 
 goog.require('Blockly.Blocks');
 
@@ -35,11 +35,11 @@ Blockly.Blocks.colour.HUE = 60;
 Blockly.Blocks['moveforward'] = {
   init: function() {
 	 this.appendDummyInput()
-        .appendField("MOVE")
+        .appendField("ADELANTE")
 		  .appendField(new Blockly.FieldImage("moveforward.png",11,16,"*"))       
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(60);
+    this.setColour(10);
     this.setTooltip('MOVE Forward 40cm');
     this.setHelpUrl('');
   }
@@ -48,11 +48,11 @@ Blockly.Blocks['moveforward'] = {
 Blockly.Blocks['movebackward'] = {
   init: function() {
 	 this.appendDummyInput()
-        .appendField("MOVE")
+        .appendField("ATRÃS")
 		  .appendField(new Blockly.FieldImage("movebackward.png",11,16,"*"))       
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(60);
+    this.setColour(40);
     this.setTooltip('MOVE Backward 40cm');
     this.setHelpUrl('');
   }
@@ -61,11 +61,11 @@ Blockly.Blocks['movebackward'] = {
 Blockly.Blocks['turnright'] = {
   init: function() {
 	 this.appendDummyInput()
-        .appendField("TURN")
+        .appendField("GIRA A LA DERECHA")
 		  .appendField(new Blockly.FieldImage("turnright.png",16,16,"*"))       
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(60);
+    this.setColour(90);
     this.setTooltip('RIGHT turn 90º');
     this.setHelpUrl('');
   }
@@ -74,11 +74,11 @@ Blockly.Blocks['turnright'] = {
 Blockly.Blocks['turnleft'] = {
   init: function() {
 	 this.appendDummyInput()
-        .appendField("TURN")
+        .appendField("GIRA A LA IZQUIERDA")
 		  .appendField(new Blockly.FieldImage("turnleft.png",16,16,"*"));
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(60);
+    this.setColour(180);
     this.setTooltip('LEFT turn 90º');
     this.setHelpUrl('');
   }
@@ -87,12 +87,12 @@ Blockly.Blocks['turnleft'] = {
 Blockly.Blocks['turn180'] = {
   init: function() {
 	 this.appendDummyInput()
-        .appendField("TURN 180 deg")
+        .appendField("MEDIA VUELTA")
 		  .appendField(new Blockly.FieldImage("turnright180.png",16,16,"*"))
-		  .appendField(new Blockly.FieldDropdown([["RIGHT", "0"], ["LEFT", "1"]]), "turn");
+		  .appendField(new Blockly.FieldDropdown([["DERECHA", "0"], ["IZQUIERDA", "1"]]), "turn");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(60);
+    this.setColour(220);
     this.setTooltip('Turn 180 degrees');
     this.setHelpUrl('');
   }
@@ -101,12 +101,12 @@ Blockly.Blocks['turn180'] = {
 Blockly.Blocks['spin360'] = {
   init: function() {
 	 this.appendDummyInput()
-        .appendField("SPIN 360 deg")
+        .appendField("VUELTA COMPLETA")
 		  .appendField(new Blockly.FieldImage("spinright.png",16,16,"*"))
-		  .appendField(new Blockly.FieldDropdown([["RIGHT", "0"], ["LEFT", "1"]]), "spin");
+		  .appendField(new Blockly.FieldDropdown([["DERECHA", "0"], ["IZQUIERDA", "1"]]), "spin");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(60);
+    this.setColour(180);
     this.setTooltip('Spin 360 degrees');
     this.setHelpUrl('');
   }
@@ -116,8 +116,8 @@ Blockly.Blocks['spin360'] = {
 Blockly.Blocks['turn'] = {
   init: function() {
 	 this.appendDummyInput()
-        .appendField("TURN ")		  
-		  .appendField(new Blockly.FieldDropdown([["RIGHT", "0"], ["LEFT", "1"]]), "turn");		  
+        .appendField("GIRAR ")		  
+		  .appendField(new Blockly.FieldDropdown([["DERECHA", "0"], ["IZQUIERDA", "1"]]), "turn");		  
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(60);
@@ -134,8 +134,8 @@ Blockly.Blocks['turndegrees'] = {
 	//	  .appendField(new Blockly.FieldNumber(45, -720, 720, 1), "DValue")
 	//	  .appendField("degrees ");				  
 	 this.appendValueInput("degrees")
-        .appendField("TURN ")		  
-		  .appendField(new Blockly.FieldDropdown([["RIGHT >", "0"], ["LEFT <", "1"]]), "turn")		  
+        .appendField("GIRAR A LA ")		  
+		  .appendField(new Blockly.FieldDropdown([["DERECHA", "0"], ["IZQUIERDA", "1"]]), "turn")		  
 		  //.appendField(new Blockly.FieldDropdown([["SHORT", "0"], ["MEDIUM", "1"], ["LONG", "2"]]), "distance");
 		  //.appendField(new Blockly.FieldNumber(5000, 0, 25000, 1), "steps")  
 		  .appendField("degrees:");
@@ -150,8 +150,8 @@ Blockly.Blocks['turndegrees'] = {
 Blockly.Blocks['movesimple'] = {
   init: function() {
 	 this.appendValueInput("cm")
-        .appendField("MOVE ")		  
-		  .appendField(new Blockly.FieldDropdown([["FORWARD", "0"], ["BACKWARD", "1"]]), "move")		  
+        .appendField("MOVERSE ")		  
+		  .appendField(new Blockly.FieldDropdown([["ADELANTE", "0"], ["ATRÃS", "1"]]), "move")		  
 		  //.appendField(new Blockly.FieldDropdown([["SHORT", "0"], ["MEDIUM", "1"], ["LONG", "2"]]), "distance");
 		  //.appendField(new Blockly.FieldNumber(5000, 0, 25000, 1), "steps")  
 		  .appendField("cm:");
@@ -187,7 +187,7 @@ Blockly.Blocks['throttle'] = {
   init: function() {
     this.appendValueInput("TValue")
         .setCheck("Number")
-		  .appendField("THROTTLE");
+		  .appendField("ACELERAR");
 	 this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -201,7 +201,7 @@ Blockly.Blocks['steering'] = {
   init: function() {
     this.appendValueInput("SValue")
         .setCheck("Number")
-        .appendField("STEERING");        
+        .appendField("DAR VUELTAS");        
 	 this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -225,16 +225,17 @@ Blockly.Blocks['servo'] = {
   }
 };
 
+
 Blockly.Blocks['mode'] = {
   init: function() {
     this.appendValueInput("value")
         .setCheck(null)
-        .appendField("MODE")
+        .appendField("MODO")
         .appendField(new Blockly.FieldDropdown([["NORMAL", "0"], ["PRO", "1"]]), "Mode");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(60);
-    this.setTooltip('BROBOT mode: Normal or PRO');
+    this.setTooltip('Xilibot mode: Normal or PRO');
     this.setHelpUrl('');
   }
 };
@@ -243,9 +244,9 @@ Blockly.Blocks['delay'] = {
   init: function() {
     this.appendValueInput("value")
         .setCheck(null)
-        .appendField("WAIT ")
+        .appendField("ESPERAR ")
 		  .appendField(new Blockly.FieldNumber(0.5, 0.1, 5, 0.1), "DValue")        
-		  .appendField("seconds");
+		  .appendField("segundos");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(60);

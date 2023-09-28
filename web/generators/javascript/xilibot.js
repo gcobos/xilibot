@@ -24,7 +24,7 @@
  */
 'use strict';
 
-goog.provide('Blockly.JavaScript.brobot');
+goog.provide('Blockly.JavaScript.xilibot');
 
 goog.require('Blockly.JavaScript');
 
