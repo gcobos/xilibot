@@ -39,7 +39,7 @@ Blockly.Blocks['moveforward'] = {
 		  .appendField(new Blockly.FieldImage("moveforward.png",11,16,"*"))       
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(10);
+    this.setColour("#6699ff");
     this.setTooltip('MOVE Forward 40cm');
     this.setHelpUrl('');
   }
@@ -52,7 +52,7 @@ Blockly.Blocks['movebackward'] = {
 		  .appendField(new Blockly.FieldImage("movebackward.png",11,16,"*"))       
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(40);
+    this.setColour("#00cc00");
     this.setTooltip('MOVE Backward 40cm');
     this.setHelpUrl('');
   }
@@ -65,8 +65,9 @@ Blockly.Blocks['turnright'] = {
 		  .appendField(new Blockly.FieldImage("turnright.png",16,16,"*"))       
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(90);
-    this.setTooltip('RIGHT turn 90∫');
+    this.setColour("#ff3300");
+
+    this.setTooltip('RIGHT turn 90‚Å∞');
     this.setHelpUrl('');
   }
 };
@@ -78,8 +79,8 @@ Blockly.Blocks['turnleft'] = {
 		  .appendField(new Blockly.FieldImage("turnleft.png",16,16,"*"));
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(180);
-    this.setTooltip('LEFT turn 90∫');
+    this.setColour("#bbbbbb");
+    this.setTooltip('LEFT turn 90‚Å∞');
     this.setHelpUrl('');
   }
 };
@@ -92,7 +93,7 @@ Blockly.Blocks['turn180'] = {
 		  .appendField(new Blockly.FieldDropdown([["DERECHA", "0"], ["IZQUIERDA", "1"]]), "turn");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(220);
+    this.setColour("#ffff00");
     this.setTooltip('Turn 180 degrees');
     this.setHelpUrl('');
   }
@@ -106,7 +107,7 @@ Blockly.Blocks['spin360'] = {
 		  .appendField(new Blockly.FieldDropdown([["DERECHA", "0"], ["IZQUIERDA", "1"]]), "spin");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(180);
+    this.setColour("#ff99ff");
     this.setTooltip('Spin 360 degrees');
     this.setHelpUrl('');
   }
