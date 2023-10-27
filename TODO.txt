@@ -17,4 +17,4 @@ x Hacer que el robot genere su propio AP con ip/password fijos
 x Mejorar la estabilidad dinámica (cuando es empujado, o cuando se balancea, etc)
 - Diseñar la carcasa en 3D
 - OTA uploads!!
-- Añadir modelos 3D + circuitos + App control remoto
+x Añadir modelos 3D + circuitos + App control remoto + screenshots
